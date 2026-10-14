@@ -27,6 +27,12 @@ export class Particles {
     this.items.push({ kind: 'swoosh', x: origin.x, y: origin.y, target, color, life: 0, maxLife: 850, bend: Math.min(this.height * .12, 90) });
   }
 
+  warp(x, y, color) {
+    this.items.push({ kind: 'warp', x, y, color, life: 0, maxLife: 380,
+      rays: Array.from({ length: this.width < 600 ? 16 : 24 }, (_, i) => ({ angle: i * 2.39996, length: .7 + Math.random() * .6 })),
+    });
+  }
+
   burst(x, y, count = 32, power = 1, color) {
     if (!this.context) return;
     const compact = this.width < 600;
@@ -53,6 +59,24 @@ export class Particles {
       p.life += Math.min(delta, 34);
       ctx.save();
       ctx.globalAlpha = Math.max(0, 1 - p.life / p.maxLife);
+      if (p.kind === 'warp') {
+        const progress = Math.min(p.life / p.maxLife, 1);
+        const reach = Math.hypot(this.width, this.height) * .65;
+        const radius = 35 + progress * progress * reach;
+        ctx.globalAlpha *= .65;
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1 + progress * 3;
+        ctx.lineCap = 'round';
+        for (const ray of p.rays) {
+          const length = (25 + progress * 180) * ray.length;
+          ctx.beginPath();
+          ctx.moveTo(p.x + Math.cos(ray.angle) * radius, p.y + Math.sin(ray.angle) * radius);
+          ctx.lineTo(p.x + Math.cos(ray.angle) * (radius + length), p.y + Math.sin(ray.angle) * (radius + length));
+          ctx.stroke();
+        }
+        ctx.restore();
+        continue;
+      }
       if (p.kind === 'swoosh') {
         const progress = Math.min(p.life / 550, 1);
         ctx.strokeStyle = p.color;

@@ -71,19 +71,38 @@ export class Invasion {
     this.animations = [];
     this.characters.forEach(element => { element.querySelector('button').style.animation = 'none'; });
     this.origin = this.center(this.scene.querySelector('.monitor-screen'));
+    this.camera = { x: this.scene.clientWidth * .5, y: this.scene.clientHeight * .45 };
     for (const [index, character] of CAST.entries()) {
       const element = this.scene.querySelector(`[data-character="${character.id}"]`);
       const target = this.center(element);
       const { x, y } = launchTransform(this.origin, target);
+      const perspectiveCorrection = (900 - 320) / 900;
+      const towardCamera = { x: (this.camera.x - target.x) * perspectiveCorrection, y: (this.camera.y - target.y) * perspectiveCorrection };
       const twist = index % 2 ? 34 : -38;
+      const restingLayer = getComputedStyle(element).zIndex;
+      const foreground = 40 + index;
+      // Start at the monitor, rush toward the lens, then recoil into the poster.
+      // Perspective is local so the launch origin stays exact at z = 0.
       this.add(element, [
-        { opacity: 0, transform: `translate(${x}px, ${y}px) scale(.025) rotate(${twist * 2}deg)`, offset: 0 },
-        { opacity: 1, transform: `translate(${x * .86}px, ${y * .82 - 45}px) scale(.2) rotate(${twist}deg)`, offset: .17 },
-        { opacity: 1, transform: `translate(${x * .3}px, ${y * .2 - 75}px) scale(.85) rotate(${-twist / 2}deg)`, offset: .5 },
-        { opacity: 1, transform: 'translate(0px, -12px) scale(1.1) rotate(-5deg)', offset: .78 },
-        { opacity: 1, transform: 'translate(0px, 0px) scale(1) rotate(0deg)', offset: 1 },
-      ], { duration: TIMING.flight, delay: character.delay, easing: 'cubic-bezier(.22,.65,.35,1)' });
+        { opacity: 0, zIndex: foreground, transform: `perspective(900px) translate3d(${x}px, ${y}px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(${twist}deg) scale(.025)`, offset: 0 },
+        { opacity: 1, zIndex: foreground, transform: `perspective(900px) translate3d(${x * .94}px, ${y * .92}px, 0px) rotateX(25deg) rotateY(${-twist}deg) rotateZ(${twist}deg) scale(.11)`, offset: .14, easing: 'cubic-bezier(.7,0,.9,.4)' },
+        { opacity: 1, zIndex: foreground, transform: `perspective(900px) translate3d(${x * .45}px, ${y * .35 - 70}px, 110px) rotateX(15deg) rotateY(${-twist * .5}deg) rotateZ(${-twist * .3}deg) scale(.45)`, offset: .36, easing: 'cubic-bezier(.15,.6,.25,1)' },
+        { opacity: 1, zIndex: foreground, transform: `perspective(900px) translate3d(${towardCamera.x}px, ${towardCamera.y}px, 320px) rotateX(-8deg) rotateY(${twist * .18}deg) rotateZ(${-twist * .15}deg) scale(1.22)`, offset: TIMING.punch },
+        { opacity: 1, zIndex: foreground, transform: `perspective(900px) translate3d(${towardCamera.x * .85}px, ${towardCamera.y * .85}px, 280px) rotateX(-5deg) rotateY(0deg) rotateZ(3deg) scale(1.14)`, offset: .64, easing: 'cubic-bezier(.25,.7,.25,1)' },
+        { opacity: 1, zIndex: foreground, transform: 'perspective(900px) translate3d(0px, 10px, -35px) rotateX(0deg) rotateY(0deg) rotateZ(-3deg) scale(.95)', offset: .86, easing: 'ease-out' },
+        { opacity: 1, zIndex: restingLayer, transform: 'perspective(900px) translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1)', offset: 1 },
+      ], { duration: TIMING.flight, delay: character.delay, easing: 'linear' });
     }
+    const shake = [{ transform: 'translate3d(0px, 0px, 0px)', offset: 0 }];
+    const strength = this.scene.clientWidth < 600 ? 4 : 7;
+    for (const character of CAST) {
+      const impact = character.delay + TIMING.flight * TIMING.punch;
+      [[-1, 0, 0], [22, -1, .6], [65, .8, -.5], [110, -.4, .25], [175, 0, 0]].forEach(([time, x, y]) => {
+        shake.push({ transform: `translate3d(${x * strength}px, ${y * strength}px, 0px)`, offset: (impact + time) / TIMING.total });
+      });
+    }
+    shake.push({ transform: 'translate3d(0px, 0px, 0px)', offset: 1 });
+    this.add(this.scene, shake, { duration: TIMING.total });
     this.add(this.title, [
       { opacity: 0, transform: 'scale(.1) rotate(-10deg)', offset: 0 },
       { opacity: 1, transform: 'scale(1.13) rotate(3deg)', offset: .52 },
@@ -132,12 +151,17 @@ export class Invasion {
       CAST.forEach((character, index) => {
         if (this.elapsed >= character.delay && !this.fired.has(character.id)) {
           this.fired.add(character.id);
-          this.particles.burst(this.origin.x, this.origin.y, 28, 1.5, character.color);
+          this.particles.burst(this.origin.x, this.origin.y, 40, 2, character.color);
           const element = this.scene.querySelector(`[data-character="${character.id}"]`);
           // Layout coordinates are independent of the current flight transform.
           const destination = { x: element.offsetLeft, y: element.offsetTop };
           this.particles.swoosh(this.origin, destination, character.color);
           this.sound.pop(index);
+        }
+        if (this.elapsed >= character.delay + TIMING.flight * TIMING.punch && !this.fired.has(`${character.id}-impact`)) {
+          this.fired.add(`${character.id}-impact`);
+          this.particles.warp(this.camera.x, this.camera.y, character.color);
+          this.particles.burst(this.camera.x, this.camera.y, 22, 2.2, character.color);
         }
       });
       if (this.elapsed >= TIMING.title && !this.fired.has('title')) {

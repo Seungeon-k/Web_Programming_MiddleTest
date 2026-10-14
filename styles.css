@@ -70,12 +70,12 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
 .character-hit:hover img { filter: drop-shadow(0 12px 0 #35492c24) drop-shadow(0 0 15px #fff9); }
 .character-label { position: absolute; left: 50%; bottom: 4%; translate: -50%; border: 1.5px solid var(--ink); background: var(--paper); padding: 4px 11px; box-shadow: 2px 2px var(--ink); border-radius: 3px; font-size: 10px; font-weight: 800; opacity: 0; transition: opacity .2s; white-space: nowrap; }
 .character-hit:hover .character-label, .character-hit:focus-visible .character-label { opacity: 1; }
-.character-keroro { left: 49%; top: 34%; width: min(48cqw, 67cqh); z-index: 5; --depth: .6; }
-.character-giroro { left: 20%; top: 46%; width: min(31cqw, 48cqh); --depth: 1.2; }
-.character-tamama { left: 80%; top: 40%; width: min(34cqw, 49cqh); --depth: .9; }
-.character-dororo { left: 43%; top: 80%; width: min(28cqw, 39cqh); z-index: 6; --depth: 1.5; }
-.character-kururu { left: 78%; top: 79%; width: min(30cqw, 41cqh); z-index: 6; --depth: 1.1; }
-.title-lockup { position: absolute; left: 50%; top: 61%; width: min(32cqw, 45cqh); translate: -50% -50%; z-index: 9; will-change: transform; pointer-events: none; }
+.character-keroro { left: 49%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
+.character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); --depth: 1.2; }
+.character-tamama { left: 83%; top: 43%; width: min(44cqw, 65cqh); --depth: .9; }
+.character-dororo { left: 43%; top: 81%; width: min(38cqw, 54cqh); z-index: 6; --depth: 1.5; }
+.character-kururu { left: 80%; top: 80%; width: min(41cqw, 58cqh); z-index: 6; --depth: 1.1; }
+.title-lockup { position: absolute; left: 50%; top: 57%; width: min(32cqw, 45cqh); translate: -50% -50%; z-index: 9; will-change: transform; pointer-events: none; }
 .title-lockup img { width: 100%; height: auto; filter: drop-shadow(0 7px 0 #2c3d2724); }
 .speech-bubble { position: absolute; top: 13%; left: 73%; background: #fffdf4; border: 1.5px solid var(--ink); border-radius: 50%; padding: 14px 20px; font-size: 13px; text-align: center; line-height: 1.6; rotate: 9deg; z-index: 7; }
 .speech-bubble:after { content: ''; position: absolute; left: 12px; bottom: -7px; width: 15px; height: 15px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); background: #fffdf4; transform: skew(-20deg) rotate(40deg); }
@@ -129,18 +129,18 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .interaction-hint { display: none; }
   .speech-bubble { font-size: 10px; padding: 11px 15px; }
 }
-@media (max-width: 760px) and (orientation: portrait) {
+@media (max-width: 900px) and (orientation: portrait) {
   .site-header { height: 48px; padding-inline: 18px; }
   .brand { font-size: 11px; }
   .brand-mark { width: 25px; height: 25px; font-size: 21px; }
   .sound-button { font-size: 8px; padding: 8px 10px; }
   main { padding: 45px 12px 94px; }
   .scene-background { inset: -45px -12px -94px; }
-  .character-keroro { left: 49%; top: 25%; width: min(81cqw, 59cqh); }
-  .character-giroro { left: 20%; top: 46%; width: min(45cqw, 37cqh); }
-  .character-tamama { left: 79%; top: 43%; width: min(49cqw, 39cqh); }
-  .character-dororo { left: 44%; top: 81%; width: min(45cqw, 34cqh); }
-  .character-kururu { left: 78%; top: 78%; width: min(49cqw, 35cqh); }
+  .character-keroro { left: 49%; top: 26.5%; width: min(112cqw, 70cqh); }
+  .character-giroro { left: 17%; top: 48%; width: min(65cqw, 48cqh); }
+  .character-tamama { left: 82%; top: 45%; width: min(66cqw, 47cqh); }
+  .character-dororo { left: 42%; top: 80%; width: min(66cqw, 49cqh); }
+  .character-kururu { left: 81%; top: 78%; width: min(67cqw, 48cqh); }
   .title-lockup { left: 51%; top: 61%; width: min(65cqw, 42cqh); }
   .speech-bubble { display: none; }
   .monitor { width: min(31cqw, 21cqh); left: 16%; top: 88%; }
@@ -181,9 +181,9 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .screen-copy { font-size: 7px; }
   .scene-toolbar { padding: 8px 20px; }
   .replay-button { padding: 8px 12px; }
-  .character-keroro { width: 70cqh; }
-  .character-giroro { left: 26%; }
-  .character-tamama { left: 73%; }
+  .character-keroro { width: 87cqh; top: 38%; }
+  .character-giroro { left: 25%; }
+  .character-tamama { left: 76%; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

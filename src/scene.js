@@ -6,5 +6,5 @@ export const CAST = [
   { id: 'keroro', name: '케로로', color: '#67a946', delay: 3100, reaction: 'salute' },
 ];
 
-export const TIMING = Object.freeze({ flight: 1250, title: 4580, titleDuration: 1000, total: 6100 });
+export const TIMING = Object.freeze({ flight: 1250, punch: .56, title: 4580, titleDuration: 1000, total: 6100 });
 export const launchTransform = (origin, target) => ({ x: origin.x - target.x, y: origin.y - target.y });

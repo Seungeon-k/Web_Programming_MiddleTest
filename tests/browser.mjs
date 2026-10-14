@@ -26,17 +26,22 @@ try {
   assert.equal(await page.locator('body').evaluate(element => /[\u3040-\u30ff\u4e00-\u9fff]/u.test(element.innerText)), false, 'Visible copy is Korean');
   assert.equal(await page.locator('.progress-track').getAttribute('aria-valuenow'), '100');
   assert.equal(await page.locator('.character img').evaluateAll(images => images.every(image => image.complete && image.naturalWidth > 0)), true);
+  assert.ok(await page.locator('#scene').evaluate(scene => [...scene.querySelectorAll('.character')].reduce((area, element) => area + element.offsetWidth ** 2, 0) / (scene.clientWidth * scene.clientHeight)) > 1.2, 'Large overlapping characters fill the poster');
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
 
   await page.locator('#replay').click();
   await page.waitForTimeout(1600);
   await page.locator('#pause').click();
   assert.equal(await page.locator('#scene').getAttribute('data-state'), 'paused');
+  assert.ok(await page.locator('.character-giroro').evaluate(element => element.getBoundingClientRect().width / element.offsetWidth) > 1.4, 'First character rushes in front of the camera before landing');
+  assert.ok(await page.locator('.character-giroro').evaluate(element => Number(getComputedStyle(element).zIndex)) >= 40, 'Rushing character renders in front of the poster');
   const progress = await page.locator('.progress-track').getAttribute('aria-valuenow');
+  const camera = await page.locator('#scene').evaluate(element => getComputedStyle(element).transform);
   const poses = await page.locator('.character').evaluateAll(elements => elements.map(element => getComputedStyle(element).transform));
   await page.waitForTimeout(350);
   assert.equal(await page.locator('.progress-track').getAttribute('aria-valuenow'), progress);
   assert.deepEqual(await page.locator('.character').evaluateAll(elements => elements.map(element => getComputedStyle(element).transform)), poses);
+  assert.equal(await page.locator('#scene').evaluate(element => getComputedStyle(element).transform), camera, 'Camera shake pauses with the flight');
   await page.screenshot({ path: `${output}/mid-flight.png` });
   await page.locator('#pause').click();
   await page.waitForTimeout(150);
@@ -96,6 +101,7 @@ try {
     await page.locator('#skip:not([disabled])').click();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Horizontal overflow at ${width}`);
     assert.equal(await page.locator('#scene').getAttribute('data-state'), 'complete');
+    assert.ok(await page.locator('#scene').evaluate(scene => [...scene.querySelectorAll('.character')].reduce((area, element) => area + element.offsetWidth ** 2, 0) / (scene.clientWidth * scene.clientHeight)) > 1.2, `Dense poster composition at ${width}px`);
     await page.screenshot({ path: `${output}/mobile-${width}.png`, fullPage: true });
     assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true, `Single-screen layout at ${width}`);
     console.log(`PASS: ${width}px responsive poster, no overflow`);
