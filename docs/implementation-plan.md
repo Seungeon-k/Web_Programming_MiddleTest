@@ -27,4 +27,6 @@
 - [x] 2. `index.html`, `styles.css`, `src/scene.js`로 포스터와 소대 소개, 반응형 배치를 구현한다. Node 테스트 통과.
 - [x] 3. `src/animation.js`, `src/particles.js`, `src/audio.js`, `src/main.js`로 등장 시퀀스와 모든 UI 제어를 구현한다.
 - [x] 4. `scripts/dev.mjs`, `scripts/build.mjs`, README를 작성하고 브라우저 데스크톱/모바일/접근성 검증을 수행한다.
-- [ ] 5. 독립 리뷰에서 중요한 문제를 수정하고, 검증 후 한국어 커밋과 원격 동기화를 수행한다.
+- [x] 5. 독립 리뷰에서 중요한 문제를 수정하고, 검증 후 한국어 커밋과 원격 동기화를 수행한다.
+
+완료: `codex/keroro-invasion` 브랜치를 지정한 origin에 업로드했다. 최초 구현 커밋은 `0f76f1d`이며, 실행 방법은 README에 기록했다.
