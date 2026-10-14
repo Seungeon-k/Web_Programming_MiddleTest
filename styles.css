@@ -72,12 +72,12 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
 .character-hit:hover .character-label, .character-hit:focus-visible .character-label { opacity: 1; }
 .character-keroro { left: 49%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
 .character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); z-index: 8; --depth: 1.2; }
-.character-tamama { left: 83%; top: 43%; width: min(44cqw, 65cqh); z-index: 7; --depth: .9; }
+.character-tamama { left: 83%; top: 26%; width: min(44cqw, 65cqh); z-index: 7; --depth: .9; }
 .character-dororo { left: 43%; top: 81%; width: min(38cqw, 54cqh); z-index: 6; --depth: 1.5; }
 .character-kururu { left: 80%; top: 80%; width: min(41cqw, 58cqh); z-index: 6; --depth: 1.1; }
 .title-lockup { position: absolute; left: 50%; top: 57%; width: min(32cqw, 45cqh); translate: -50% -50%; z-index: 9; will-change: transform; pointer-events: none; }
 .title-lockup img { width: 100%; height: auto; filter: drop-shadow(0 7px 0 #2c3d2724); }
-.speech-bubble { position: absolute; top: 13%; left: 73%; background: #fffdf4; border: 1.5px solid var(--ink); border-radius: 50%; padding: 14px 20px; font-size: 13px; text-align: center; line-height: 1.6; rotate: 9deg; z-index: 7; }
+.speech-bubble { position: absolute; top: 9%; left: 12%; background: #fffdf4; border: 1.5px solid var(--ink); border-radius: 50%; padding: 14px 20px; font-size: 13px; text-align: center; line-height: 1.6; rotate: 9deg; z-index: 7; }
 .speech-bubble:after { content: ''; position: absolute; left: 12px; bottom: -7px; width: 15px; height: 15px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); background: #fffdf4; transform: skew(-20deg) rotate(40deg); }
 .speech-bubble>span { position: absolute; right: -8px; top: -17px; font-size: 30px; color: var(--yellow); -webkit-text-stroke: 1px var(--ink); }
 
@@ -138,7 +138,7 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .scene-background { inset: -45px -12px -94px; }
   .character-keroro { left: 49%; top: 26.5%; width: min(112cqw, 70cqh); }
   .character-giroro { left: 17%; top: 48%; width: min(65cqw, 48cqh); }
-  .character-tamama { left: 82%; top: 45%; width: min(66cqw, 47cqh); }
+  .character-tamama { left: 82%; top: 37%; width: min(66cqw, 47cqh); }
   .character-dororo { left: 42%; top: 80%; width: min(66cqw, 49cqh); }
   .character-kururu { left: 81%; top: 78%; width: min(67cqw, 48cqh); }
   .title-lockup { left: 51%; top: 58%; width: min(65cqw, 42cqh); }

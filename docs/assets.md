@@ -14,7 +14,7 @@ Strict image extraction and local inpainting, not a new illustration. The poster
 | --- | --- |
 | `keroro.png` | 한 손 경례, 반대 손 V, 오른쪽 눈 윙크, 대각선으로 뻗은 팔과 기존 몸 기울기 유지 |
 | `giroro.png` | 화면 왼쪽에 든 총, 뒤로 접힌 반대 팔, 아래로 뻗은 좁은 실루엣. 달리는 자세나 넓게 벌린 다리 금지 |
-| `tamama.png` | 시계 방향으로 기울어진 큰 머리, 몸 앞에서 아래로 내려간 양손, 오른쪽으로 향한 발. 두 팔을 벌리는 점프 금지 |
+| `tamama.png` | 시계 방향으로 기울어진 큰 머리와 몸 앞에서 내려간 양손 유지. 최신 요청에 따라 양발을 좌우로 넓게 벌린 자세 |
 | `dororo.png` | 오른쪽 뺨 옆 닌자 수인, 왼쪽으로 뻗은 반대 팔, 아래로 향하는 긴 다리와 두건 방향 유지 |
 | `kururu.png` | 시계 방향으로 기울어진 머리, 나선 안경, 왼쪽의 올린 손, 몸 앞의 접힌 팔과 아래로 흐르는 목도리. 넓은 도약 자세 금지 |
 
@@ -35,3 +35,11 @@ Strict image extraction and local inpainting, not a new illustration. The poster
 기로로는 기존 길게 내려간 다리를 유지하고 몸 오른쪽 뒤에 짧게 접힌 다리를 복원했다. 타마마는 앞으로 내려간 두 손과 오른쪽으로 뻗은 다리를 유지하고 손 뒤에서 보이는 짧은 다리를 복원했다. 복원한 발을 포함한 모든 부위가 이미지 캔버스 안에 들어간 것을 시각적으로 확인했다.
 
 완성 화면에서 타마마의 하체가 쿠루루에, 기로로의 긴 다리 끝이 모니터에 가려지는 겹침도 확인했다. 타마마는 쿠루루 앞에, 기로로는 모니터 앞에 그리도록 레이어 순서를 조정했다. 캐릭터 크기와 위치, 등장 연출은 유지했다.
+
+## 타마마의 넓게 벌린 양발과 위치 조정
+
+사용자의 후속 요청에 따라 타마마의 짧게 접힌 다리를 좌측으로 길게 뻗은 다리로 바꾸어, 양발을 넓게 벌린 자세로 수정했다. 내장 image_gen 도구에 현재 PNG를 편집 대상으로, 원본 포스터를 자세 참조로 제공했다. 수정 PNG는 `assets/tamama.png`에 저장했다.
+
+편집 프롬프트: “Change only Tamama's legs into a wide straddle like the poster. Preserve the long right-extending leg; replace the tucked leg with a similarly long leg extending left and slightly down, about 110–130 degrees apart, both rounded feet visible. Keep the head tilt, expression, hat, badge, body, both hanging arms and hands, colors, linework, scale and framing unchanged. Exactly two arms and two legs. True alpha transparency.”
+
+쿠루루와 간격을 두기 위해 타마마의 중심 위치를 데스크톱에서는 장면 높이의 43%에서 26%로, 세로 화면에서는 45%에서 37%로 올렸다. 부유 동작 중에도 손끝이 쿠루루 모자와 겹치지 않도록 여유를 두었다. 얼굴을 가리게 된 말풍선도 왼쪽 위 빈 공간으로 옮겼다. 캐릭터 크기와 등장 연출은 유지했다.
