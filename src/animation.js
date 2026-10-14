@@ -12,6 +12,7 @@ export class Invasion {
     this.frameId = null;
     this.lastTick = 0;
     this.fired = new Set();
+    this.reactions = new Map();
     this.characters = [...scene.querySelectorAll('.character')];
     this.title = scene.querySelector('.title-lockup');
     this.characters.forEach(element => { element.inert = true; });
@@ -64,6 +65,8 @@ export class Invasion {
   }
 
   build() {
+    this.reactions.forEach(animation => animation.cancel());
+    this.reactions.clear();
     this.animations.forEach(animation => animation.cancel());
     this.animations = [];
     this.characters.forEach(element => { element.querySelector('button').style.animation = 'none'; });
@@ -88,6 +91,9 @@ export class Invasion {
       { opacity: 1, transform: 'scale(1) rotate(0deg)', offset: 1 },
     ], { duration: TIMING.titleDuration, delay: TIMING.title, easing: 'cubic-bezier(.19,.7,.3,1)' });
     this.add(this.bubble, [{ opacity: 0, scale: .1 }, { opacity: 1, scale: 1.1, offset: .7 }, { opacity: 1, scale: 1 }], { duration: 420, delay: TIMING.title + 650 });
+    this.add(this.scene.querySelector('.impact-lines'), [
+      { opacity: 0, transform: 'scale(.8)' }, { opacity: .35, transform: 'scale(1)', offset: .2 }, { opacity: 0, transform: 'scale(1.25)' },
+    ], { duration: 1100, delay: TIMING.title });
     this.add(this.scene.querySelector('.screen-flash'), [
       { opacity: 0 }, { opacity: .9, offset: .25 }, { opacity: .1, offset: .6 }, { opacity: .65, offset: .8 }, { opacity: 0 },
     ], { duration: 750, delay: 220 });
@@ -110,7 +116,7 @@ export class Invasion {
     this.elapsed = 0; this.fired.clear(); this.particles.clear();
     this.build();
     if (this.reduced.matches) { this.finish(); return; }
-    this.screenStatus.textContent = 'LAUNCH SEQUENCE';
+    this.screenStatus.textContent = '출동 준비';
     this.setState('playing');
     this.sound.boot();
     this.lastTick = performance.now();
@@ -127,6 +133,10 @@ export class Invasion {
         if (this.elapsed >= character.delay && !this.fired.has(character.id)) {
           this.fired.add(character.id);
           this.particles.burst(this.origin.x, this.origin.y, 28, 1.5, character.color);
+          const element = this.scene.querySelector(`[data-character="${character.id}"]`);
+          // Layout coordinates are independent of the current flight transform.
+          const destination = { x: element.offsetLeft, y: element.offsetTop };
+          this.particles.swoosh(this.origin, destination, character.color);
           this.sound.pop(index);
         }
       });
@@ -145,7 +155,7 @@ export class Invasion {
   }
 
   complete() {
-    this.screenStatus.textContent = 'MISSION COMPLETE';
+    this.screenStatus.textContent = '전원 집합!';
     this.setState('complete');
     if (!this.reduced.matches) {
       this.characters.forEach((element, index) => {
@@ -155,6 +165,8 @@ export class Invasion {
   }
 
   finish() {
+    this.reactions.forEach(animation => animation.cancel());
+    this.reactions.clear();
     cancelAnimationFrame(this.frameId); this.frameId = null;
     this.elapsed = TIMING.total;
     this.seek(this.elapsed);
@@ -166,6 +178,7 @@ export class Invasion {
   pause() {
     if (!['playing', 'complete'].includes(this.state)) return;
     this.previousState = this.state;
+    this.reactions.forEach(animation => animation.pause());
     cancelAnimationFrame(this.frameId); this.frameId = null;
     this.setState('paused');
   }
@@ -174,19 +187,42 @@ export class Invasion {
     if (this.state !== 'paused') return;
     if (this.previousState === 'complete') this.complete();
     else this.setState(this.previousState || 'playing');
+    this.reactions.forEach(animation => animation.play());
     this.lastTick = performance.now();
     this.frameId = requestAnimationFrame(this.tick);
   }
 
   togglePause() { this.state === 'paused' ? this.resume() : this.pause(); }
 
-  celebrate(element, color) {
-    if (this.reduced.matches) return;
-    const target = this.center(element);
-    this.particles.burst(target.x, target.y, 24, 1, color);
+  wakeParticles() {
     if (!this.frameId && this.state === 'complete') {
       this.lastTick = performance.now();
       this.frameId = requestAnimationFrame(this.tick);
     }
+  }
+
+  burstAt(x, y, color, count = 28) {
+    if (this.reduced.matches || this.state !== 'complete') return;
+    this.particles.burst(x, y, count, 1.5, color);
+    this.wakeParticles();
+  }
+
+  react(element, character) {
+    if (this.reduced.matches || this.state !== 'complete') return;
+    const poses = {
+      recoil: ['translateX(0) rotate(0)', 'translateX(-22px) rotate(-12deg)', 'translateX(8px) rotate(4deg)', 'translateX(0) rotate(0)'],
+      jump: ['translateY(0) scale(1)', 'translateY(7px) scale(1.05,.9)', 'translateY(-42px) scale(.95,1.08)', 'translateY(0) scale(1)'],
+      wobble: ['rotate(0) scale(1)', 'rotate(20deg) scale(1.08)', 'rotate(-14deg) scale(1.04)', 'rotate(0) scale(1)'],
+      dash: ['translateX(0) skewX(0)', 'translateX(35px) skewX(-12deg)', 'translateX(-25px) skewX(8deg)', 'translateX(0) skewX(0)'],
+      salute: ['rotate(0) scale(1)', 'rotate(-10deg) scale(1.13)', 'rotate(7deg) scale(.98)', 'rotate(0) scale(1)'],
+    };
+    const image = element.querySelector('img');
+    this.reactions.get(image)?.cancel();
+    const reaction = image.animate(poses[character.reaction].map(transform => ({ transform })), { duration: 680, easing: 'cubic-bezier(.22,.7,.36,1)' });
+    this.reactions.set(image, reaction);
+    reaction.onfinish = () => { if (this.reactions.get(image) === reaction) this.reactions.delete(image); };
+    const target = this.center(element);
+    this.burstAt(target.x, target.y, character.color, 45);
+    this.sound.pop(CAST.indexOf(character));
   }
 }

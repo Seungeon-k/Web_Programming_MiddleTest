@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f2e7">
-  <meta name="description" content="모니터 너머에서 시작되는 케로로 소대의 유쾌한 지구 침략. 케로로 포스터를 새로운 인터랙티브 애니메이션으로 만나보세요.">
-  <title>ケロロ小隊、出動！ — KERORO INVASION</title>
+  <meta name="theme-color" content="#f6f3e9">
+  <meta name="description" content="모니터를 뚫고 튀어나온 케로로 소대! 화면을 움직이고 캐릭터를 눌러 즐기는 인터랙티브 포스터.">
+  <title>개구리 중사 케로로 — 소대 출동!</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <link rel="preload" href="./assets/keroro.png" as="image">
-  <link rel="preload" href="./assets/title.png" as="image">
+  <link rel="preload" href="./assets/title-ko.png" as="image">
 </head>
 <body>
-  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <a class="skip-link" href="#replay">재생 제어로 건너뛰기</a>
   <svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
     <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8l-6.2 3.3L7 14.2 2 9.3l6.9-1Z"/></symbol>
     <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 5l7 7-7 7"/></symbol>
@@ -22,23 +22,12 @@
     <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
     <symbol id="icon-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
   </defs></svg>
-
   <header class="site-header">
-    <a class="brand" href="#main" aria-label="케로로 소대 홈">
-      <span class="brand-mark" aria-hidden="true">★</span>
-      <span class="brand-name"><b lang="ja">ケロロ小隊</b><small>KERORO PLATOON</small></span>
-    </a>
-    <nav aria-label="주 메뉴">
-      <a class="nav-active" href="#main"><span>01</span> 작전 시작</a>
-      <a href="#platoon"><span>02</span> 소대원 소개</a>
-      <button type="button" class="nav-about">프로젝트 소개 <span>↗</span></button>
-    </nav>
-    <button type="button" class="sound-button" aria-label="효과음 켜기" aria-pressed="false"><svg><use href="#icon-mute"/></svg><span>SOUND OFF</span></button>
+    <span class="brand"><span class="brand-mark" aria-hidden="true">★</span><b>케로로 소대</b></span>
+    <button type="button" class="sound-button" aria-label="효과음 켜기" aria-pressed="false"><svg><use href="#icon-mute"/></svg><span>효과음 꺼짐</span></button>
   </header>
-
-  <main id="main">
+  <main id="main" aria-label="케로로 인터랙티브 포스터">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-topline"><span><i></i> PLANET EARTH · INVASION IN PROGRESS</span><span class="coordinate">35°40′ N &nbsp; 139°45′ E</span></div>
       <div class="scene" id="scene" data-state="loading">
         <div class="scene-background" aria-hidden="true">
           <div class="halftone halftone-left"></div><div class="halftone halftone-right"></div>
@@ -51,60 +40,45 @@
           <span class="confetti-piece confetti-a"></span><span class="confetti-piece confetti-b"></span><span class="confetti-piece confetti-c"></span><span class="confetti-piece confetti-d"></span>
           <span class="little-cross cross-a">+</span><span class="little-cross cross-b">+</span>
         </div>
-
-        <div class="scene-note"><span class="tiny-star">✳</span><p lang="ja">画面の向こうから、<br>ワクワクが飛び出す。</p><span class="note-translation">화면 너머, 즐거움이 튀어나온다.</span></div>
-        <div class="anniversary" aria-label="포스터의 20주년 기념 모티프"><span>ANNIVERSARY</span><b>20<sup>th</sup></b><span>ケロロ軍曹</span></div>
-
+        <div class="impact-lines" aria-hidden="true"></div>
         <button class="monitor" id="monitor" type="button" aria-label="모니터에서 케로로 소대 다시 출동시키기">
-          <span class="monitor-body"><span class="monitor-screen"><span class="scanlines"></span><span class="screen-star">★</span><span class="screen-copy">K66 SYSTEM</span><span class="screen-status">CONNECTING…</span><span class="screen-flash"></span></span><span class="monitor-chin"><span>KERON TECHNOLOGY</span><i></i></span></span>
+          <span class="monitor-body"><span class="monitor-screen"><span class="scanlines"></span><span class="screen-star">★</span><span class="screen-copy">케론 통신</span><span class="screen-status">연결 중…</span><span class="screen-flash"></span></span><span class="monitor-chin"><span>케론 테크놀로지</span><i></i></span></span>
           <span class="monitor-neck"></span><span class="monitor-foot"></span><span class="monitor-cable"></span>
-          <span class="monitor-caption">ここから、出動！ <span>↗</span></span>
+          <span class="monitor-caption">눌러서 다시 출동! <span>↗</span></span>
         </button>
-        <div class="launch-ring" aria-hidden="true"></div>
-
-        <div inert class="character character-giroro" data-character="giroro"><button class="character-hit" type="button" data-profile="giroro" aria-label="기로로 소개 보기"><img src="./assets/giroro.png" width="1280" height="1280" alt="전투 자세로 튀어나오는 기로로" fetchpriority="high"><span class="character-label">ギロロ <span>↗</span></span></button></div>
-        <div inert class="character character-tamama" data-character="tamama"><button class="character-hit" type="button" data-profile="tamama" aria-label="타마마 소개 보기"><img src="./assets/tamama.png" width="1280" height="1280" alt="양손을 아래로 내린 채 신나게 등장하는 타마마" fetchpriority="high"><span class="character-label">タママ <span>↗</span></span></button></div>
-        <div inert class="character character-kururu" data-character="kururu"><button class="character-hit" type="button" data-profile="kururu" aria-label="쿠루루 소개 보기"><img src="./assets/kururu.png" width="1280" height="1280" alt="장난스러운 미소의 쿠루루" fetchpriority="high"><span class="character-label">クルル <span>↗</span></span></button></div>
-        <div inert class="character character-dororo" data-character="dororo"><button class="character-hit" type="button" data-profile="dororo" aria-label="도로로 소개 보기"><img src="./assets/dororo.png" width="1280" height="1280" alt="바람처럼 도약하는 닌자 도로로" fetchpriority="high"><span class="character-label">ドロロ <span>↗</span></span></button></div>
-        <div inert class="character character-keroro" data-character="keroro"><button class="character-hit" type="button" data-profile="keroro" aria-label="케로로 소개 보기"><img src="./assets/keroro.png" width="1280" height="1280" alt="경례와 브이 포즈를 하는 케로로" fetchpriority="high"><span class="character-label">ケロロ <span>↗</span></span></button></div>
-
-        <div inert class="title-lockup">
-          <span class="title-kicker" lang="ja">地球のみなさん、お待たせしました！</span>
-          <h1 id="hero-title"><img src="./assets/title.png" width="1680" height="960" alt="ケロロ軍曹 超共鳴展 であります！" fetchpriority="high"></h1>
-          <p class="title-subtitle">지구 정복보다 신나는, 우리들의 대작전!</p>
-          <a class="primary-button" href="#platoon">케로로 소대 만나기 <svg><use href="#icon-arrow"/></svg></a>
+        <div inert class="character character-giroro" data-character="giroro">
+          <button class="character-hit" type="button" aria-label="기로로와 놀기"><img src="./assets/giroro.png" width="1280" height="1280" alt="기로로" fetchpriority="high"><span class="character-label">기로로</span></button>
         </div>
-        <div class="speech-bubble" lang="ja">侵略開始、<br><b>であります！</b><span>★</span></div>
+        <div inert class="character character-tamama" data-character="tamama">
+          <button class="character-hit" type="button" aria-label="타마마와 놀기"><img src="./assets/tamama.png" width="1280" height="1280" alt="타마마" fetchpriority="high"><span class="character-label">타마마</span></button>
+        </div>
+        <div inert class="character character-kururu" data-character="kururu">
+          <button class="character-hit" type="button" aria-label="쿠루루와 놀기"><img src="./assets/kururu.png" width="1280" height="1280" alt="쿠루루" fetchpriority="high"><span class="character-label">쿠루루</span></button>
+        </div>
+        <div inert class="character character-dororo" data-character="dororo">
+          <button class="character-hit" type="button" aria-label="도로로와 놀기"><img src="./assets/dororo.png" width="1280" height="1280" alt="도로로" fetchpriority="high"><span class="character-label">도로로</span></button>
+        </div>
+        <div inert class="character character-keroro" data-character="keroro">
+          <button class="character-hit" type="button" aria-label="케로로와 놀기"><img src="./assets/keroro.png" width="1280" height="1280" alt="케로로" fetchpriority="high"><span class="character-label">케로로</span></button>
+        </div>
+        <div inert class="title-lockup"><h1 id="hero-title"><img src="./assets/title-ko.png" width="1920" height="800" alt="개구리 중사 케로로" fetchpriority="high"></h1></div>
+        <div class="speech-bubble">지구 정복,<br><b>시작합니다!</b><span>★</span></div>
         <canvas id="particles" aria-hidden="true"></canvas>
-        <div class="loading-message" role="status"><span class="loading-star">★</span><span>소대원들과 연결 중<span class="loading-dots">…</span></span></div>
-        <p class="scene-hint"><span>✳</span> 캐릭터를 눌러 인사해 보세요</p>
+        <div class="loading-message" role="status"><span class="loading-star">★</span><span>소대원들과 연결 중…</span></div>
       </div>
-
-      <div class="scene-toolbar">
-        <div class="mission-status"><span class="status-dot"></span><span class="status-text" aria-live="polite">소대 연결 중</span><span class="mission-code">MISSION: K66</span></div>
-        <div class="playback-controls">
-          <button type="button" id="pause" class="icon-button" aria-label="애니메이션 일시정지" disabled><svg><use href="#icon-pause"/></svg></button>
-          <div class="progress-track" role="progressbar" aria-label="등장 애니메이션 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-          <button type="button" id="skip" class="text-button" disabled>건너뛰기 <span>→</span></button>
-          <button type="button" id="replay" class="replay-button" disabled><svg><use href="#icon-replay"/></svg> 다시 출동!</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="marquee" aria-hidden="true"><div><span>ケロロ小隊、全員集合！</span><i>★</i><span>READY TO INVADE?</span><i>★</i><span>지구를 접수하러 왔다!</span><i>★</i><span>ケロロ小隊、全員集合！</span><i>★</i><span>READY TO INVADE?</span><i>★</i><span>지구를 접수하러 왔다!</span><i>★</i></div></div>
-
-    <section class="platoon-section" id="platoon" aria-labelledby="platoon-heading">
-      <div class="section-heading"><div><span class="eyebrow">MEET THE PLATOON <i>02 / 02</i></span><h2 id="platoon-heading">수상하지만, 사랑스러운<br>다섯 명의 침략자.</h2></div><p>성격도, 특기도 제각각.<br>함께라서 더 신나는 케로로 소대입니다.<br><span>카드를 눌러 소대원의 이야기를 만나보세요. ↙</span></p></div>
-      <div class="crew-grid" id="crew-grid"></div>
-      <div class="section-footnote"><span>FIVE COLORS. ONE PLATOON.</span><span>우리의 지구 정복은 계속된다. <b>★</b></span></div>
     </section>
   </main>
-
-  <footer class="site-footer"><a class="footer-brand" href="#main">★ <b>KERORO PLATOON</b></a><p>포스터에서 시작된, 작은 인터랙티브 모험.<span>Unofficial fan-made creative project.</span></p><button class="back-top" type="button" aria-label="맨 위로">BACK TO TOP <span>↑</span></button></footer>
-
-  <dialog id="profile-dialog" class="profile-dialog" aria-labelledby="profile-name"><button class="dialog-close" type="button" aria-label="소개 닫기">×</button><div class="profile-art"><span class="profile-symbol" aria-hidden="true">★</span><img id="profile-image" src="./assets/keroro.png" alt=""></div><div class="profile-info"><span class="eyebrow" id="profile-rank"></span><h2 id="profile-name"></h2><p class="profile-korean"></p><blockquote id="profile-quote"></blockquote><p id="profile-description"></p><button class="primary-button dialog-dismiss" type="button">소대에 합류 완료! <span>★</span></button></div></dialog>
-  <dialog id="about-dialog" class="about-dialog" aria-labelledby="about-title"><button class="dialog-close" type="button" aria-label="프로젝트 소개 닫기">×</button><span class="eyebrow">A POSTER, BROUGHT TO LIFE</span><h2 id="about-title">포스터가 살아난다면?</h2><p>케로로 군조 초공명전 포스터에서 영감을 얻은 비공식 팬 제작 인터랙티브 웹페이지입니다. 모니터 너머로 다섯 소대원이 튀어나와 하나의 포스터를 완성합니다.</p><p>원본 포스터를 참고해 캐릭터와 일본어 타이틀 이미지를 재구성했습니다. 등장 애니메이션을 다시 재생하거나, 소대원을 눌러 소개를 확인해 보세요.</p><p class="about-credit">캐릭터와 원작의 권리는 각 권리자에게 있습니다.<br>실제 전시 안내 및 공식 홈페이지가 아닙니다.</p><a href="https://github.com/Seungeon-k/Web_Programming" target="_blank" rel="noopener noreferrer" class="primary-button">GitHub에서 프로젝트 보기 <span>↗</span></a></dialog>
-  <noscript><p class="noscript-note">애니메이션과 캐릭터 소개를 즐기려면 JavaScript를 켜 주세요.</p></noscript>
+  <div class="scene-toolbar" role="group" aria-label="애니메이션 제어">
+    <div class="mission-status"><span class="status-dot"></span><span class="status-text" aria-live="polite">소대 연결 중</span></div>
+    <div class="playback-controls">
+      <button type="button" id="pause" class="icon-button" aria-label="애니메이션 일시정지" disabled><svg><use href="#icon-pause"/></svg></button>
+      <div class="progress-track" role="progressbar" aria-label="등장 애니메이션 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+      <button type="button" id="skip" class="text-button" disabled>건너뛰기 <span>→</span></button>
+      <button type="button" id="replay" class="replay-button" disabled><svg><use href="#icon-replay"/></svg> 다시 출동!</button>
+    </div>
+    <p class="interaction-hint">캐릭터를 톡! 화면을 움직여 보세요.</p>
+  </div>
+  <noscript><p class="noscript-note">움직이는 포스터를 보려면 JavaScript를 켜 주세요.</p></noscript>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

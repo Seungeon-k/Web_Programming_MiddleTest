@@ -23,6 +23,10 @@ export class Particles {
     this.context?.clearRect(0, 0, this.width, this.height);
   }
 
+  swoosh(origin, target, color) {
+    this.items.push({ kind: 'swoosh', x: origin.x, y: origin.y, target, color, life: 0, maxLife: 850, bend: Math.min(this.height * .12, 90) });
+  }
+
   burst(x, y, count = 32, power = 1, color) {
     if (!this.context) return;
     const compact = this.width < 600;
@@ -49,6 +53,24 @@ export class Particles {
       p.life += Math.min(delta, 34);
       ctx.save();
       ctx.globalAlpha = Math.max(0, 1 - p.life / p.maxLife);
+      if (p.kind === 'swoosh') {
+        const progress = Math.min(p.life / 550, 1);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        for (let ribbon = 0; ribbon < 3; ribbon++) {
+          ctx.beginPath();
+          for (let step = 0; step <= 16; step++) {
+            const t = Math.max(0, progress - .28) + step / 16 * Math.min(progress, .28);
+            const x = p.x + (p.target.x - p.x) * t + ribbon * 5;
+            const y = p.y + (p.target.y - p.y) * t - Math.sin(t * Math.PI) * p.bend + ribbon * 4;
+            step ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+        continue;
+      }
       if (p.kind === 'ring') {
         ctx.strokeStyle = p.color;
         ctx.lineWidth = 3 * (1 - p.life / p.maxLife);

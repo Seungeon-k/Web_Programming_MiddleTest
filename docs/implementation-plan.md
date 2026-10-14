@@ -1,32 +1,25 @@
-# Keroro Invasion Implementation Plan
+# 케로로 인터랙티브 포스터 구현 기록
 
-> Execution: native implementation in the current session.
+**목표:** 모니터에서 다섯 캐릭터가 튀어나온 후 한국어 타이틀이 등장하는 반응형 웹페이지.
+**구조:** 정적 ES modules, Web Animations API, Canvas 2D.
+**명세:** `docs/design.md`
 
-**Goal:** 다섯 캐릭터가 모니터에서 튀어나온 후 일본어 로고가 등장하는 반응형 웹페이지.
-**Architecture:** 의존성 없는 정적 ES modules, Web Animations API, Canvas 2D.
-**Spec:** `docs/design.md`
+## 최초 구현
 
-## Global Constraints
+- [x] 원본 자세에 맞춰 가려진 부분을 복원한 투명 캐릭터 5종 제작
+- [x] 모니터 시작점, 캐릭터 등장 순서와 마지막 타이틀의 시간축 구현
+- [x] 반응형 배치, 재생 제어, 선택형 효과음, 동작 줄이기 지원
+- [x] Node 및 실제 브라우저 검증, 독립 리뷰 수정
+- [x] `codex/keroro-invasion` 브랜치를 지정 origin에 업로드 (`0f76f1d`)
 
-- 사용자 제공 포스터 기반, 일본어 타이틀 유지.
-- 다섯 캐릭터 전원 등장한 뒤 중앙 타이틀 표시.
-- 반응형, 재생 제어, reduced-motion, 키보드 접근성.
-- GitHub: Seungeon-k/Web_Programming.
+## 한국어·연출 중심 개편
 
-## Review Focus
+- [x] 한국어 `개구리 중사 케로로` 투명 로고 제작 및 교체
+- [x] 소개 섹션, 모달, 내비게이션, 배너, 푸터 제거
+- [x] 큰 캐릭터와 작은 중앙 타이틀을 한 화면에 재배치
+- [x] 캐릭터별 클릭 반응, 마우스 패럴랙스, 배경 클릭 파티클 추가
+- [x] 발사 궤적과 타이틀 피날레 집중선 추가
+- [x] 브라우저 검증을 현재 UI에 맞게 변경
+- [x] 독립 리뷰에서 일시정지 시 패럴랙스가 계속 움직이는 문제 수정
 
-1. 재생 중 연속 재시작 시 이전 애니메이션/타이머가 남지 않아야 한다.
-2. 모바일 화면에서 캐릭터/버튼의 가로 넘침이 없어야 한다.
-3. 이미지 실패 시 페이지가 영구 로딩 상태에 머물지 않아야 한다.
-4. 일시정지 시 타이틀, 캐릭터, 파티클이 함께 멈춰야 한다.
-5. reduced-motion에서는 완성 화면이 즉시 보여야 한다.
-
-## Tasks
-
-- [x] 1. 투명 캐릭터 5종과 로고 생성/복사, scene 타이밍 및 좌표 테스트를 먼저 작성하고 실패를 확인한다.
-- [x] 2. `index.html`, `styles.css`, `src/scene.js`로 포스터와 소대 소개, 반응형 배치를 구현한다. Node 테스트 통과.
-- [x] 3. `src/animation.js`, `src/particles.js`, `src/audio.js`, `src/main.js`로 등장 시퀀스와 모든 UI 제어를 구현한다.
-- [x] 4. `scripts/dev.mjs`, `scripts/build.mjs`, README를 작성하고 브라우저 데스크톱/모바일/접근성 검증을 수행한다.
-- [x] 5. 독립 리뷰에서 중요한 문제를 수정하고, 검증 후 한국어 커밋과 원격 동기화를 수행한다.
-
-완료: `codex/keroro-invasion` 브랜치를 지정한 origin에 업로드했다. 최초 구현 커밋은 `0f76f1d`이며, 실행 방법은 README에 기록했다.
+캐릭터 자세를 보존한 기존 이미지 5종은 이번 개편에서 변경하지 않았다.

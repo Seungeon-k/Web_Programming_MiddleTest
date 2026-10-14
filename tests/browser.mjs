@@ -5,6 +5,8 @@ const browser = await chromium.launch({ headless: true, channel: process.env.PLA
 const output = process.env.QA_OUTPUT || '/tmp/keroro-qa';
 await mkdir(output, { recursive: true });
 const errors = [];
+// Ignore hover filter transitions when checking actual character movement.
+const movementTime = element => element.getAnimations().find(animation => animation.effect.getKeyframes().some(frame => 'transform' in frame))?.currentTime;
 const page = await browser.newPage({ viewport: { width: 1440, height: 1050 }, deviceScaleFactor: 1 });
 page.on('pageerror', error => errors.push(error.message));
 try {
@@ -19,7 +21,9 @@ try {
   await page.goto('http://127.0.0.1:4173', { waitUntil: 'networkidle' });
   await page.waitForFunction(() => document.querySelector('#scene').dataset.state === 'complete');
   assert.equal(await page.locator('.character').count(), 5);
-  assert.equal(await page.locator('.crew-card').count(), 5);
+  assert.equal(await page.locator('.crew-card, dialog, footer, nav, #platoon').count(), 0, 'Only the interactive poster remains');
+  assert.equal(await page.locator('#hero-title img').getAttribute('alt'), '개구리 중사 케로로');
+  assert.equal(await page.locator('body').evaluate(element => /[\u3040-\u30ff\u4e00-\u9fff]/u.test(element.innerText)), false, 'Visible copy is Korean');
   assert.equal(await page.locator('.progress-track').getAttribute('aria-valuenow'), '100');
   assert.equal(await page.locator('.character img').evaluateAll(images => images.every(image => image.complete && image.naturalWidth > 0)), true);
   await page.screenshot({ path: `${output}/desktop.png`, fullPage: true });
@@ -41,11 +45,9 @@ try {
   assert.equal(await page.locator('#scene').getAttribute('data-state'), 'complete');
 
   await page.locator('#pause').click();
-  assert.equal(await page.locator('.title-lockup').evaluate(element => element.inert), false, 'Paused complete scene keeps its CTA interactive');
-  assert.equal(await page.locator('.character-keroro').evaluate(element => element.inert), false, 'Paused complete scene keeps character profiles interactive');
+  assert.equal(await page.locator('.character-keroro').evaluate(element => element.inert), false, 'Paused complete scene keeps character controls focusable');
   await page.locator('.character-keroro button').click();
-  assert.equal(await page.locator('#profile-dialog').evaluate(dialog => dialog.open), true);
-  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('dialog').count(), 0);
   await page.setViewportSize({ width: 1360, height: 1050 });
   await page.waitForTimeout(100);
   await page.locator('#pause').click();
@@ -53,25 +55,40 @@ try {
   await page.setViewportSize({ width: 1440, height: 1050 });
 
   for (const id of ['keroro', 'tamama', 'giroro', 'kururu', 'dororo']) {
-    await page.locator(`.crew-card[data-profile="${id}"]`).click();
-    assert.equal(await page.locator('#profile-dialog').evaluate(dialog => dialog.open), true);
-    assert.ok((await page.locator('#profile-image').getAttribute('src')).includes(id));
-    await page.keyboard.press('Escape');
-    assert.equal(await page.locator('#profile-dialog').evaluate(dialog => dialog.open), false);
+    const character = page.locator(`[data-character="${id}"]`);
+    await character.locator('button').click({ force: true });
+    assert.ok(await character.locator('img').evaluate(element => element.getAnimations().some(animation => animation.effect.getKeyframes().some(frame => 'transform' in frame))), `${id} reacts instead of opening a profile`);
   }
+  await page.locator('#pause').click();
+  const reaction = page.locator('.character-dororo img');
+  await reaction.evaluate(element => Promise.all(element.getAnimations().filter(animation => animation.effect.getKeyframes().some(frame => 'transform' in frame)).map(animation => animation.ready)));
+  const reactionTime = await reaction.evaluate(movementTime);
+  assert.equal(typeof reactionTime, 'number', 'Reaction is still active when paused');
+  await page.waitForTimeout(180);
+  assert.equal(await reaction.evaluate(movementTime), reactionTime, 'Character reaction pauses with the scene');
+  await page.locator('#pause').click();
+  await page.waitForTimeout(750);
+  assert.equal(await reaction.evaluate(element => element.getAnimations().length), 0, 'Character reaction completes after resuming');
+  await page.mouse.move(100, 100);
+  await page.waitForTimeout(70);
+  assert.notEqual(await page.locator('#scene').evaluate(element => element.style.getPropertyValue('--px')), '0px', 'Mouse movement creates parallax');
+  const parallax = await page.locator('.character-keroro img').evaluate(element => getComputedStyle(element).translate);
+  await page.locator('#pause').press('Enter');
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(350);
+  assert.equal(await page.locator('.character-keroro img').evaluate(element => getComputedStyle(element).translate), parallax, 'Pause freezes parallax even when the pointer leaves');
+  await page.locator('#pause').click();
   await page.locator('.sound-button').click();
   assert.equal(await page.locator('.sound-button').getAttribute('aria-pressed'), 'true');
   await page.locator('.sound-button').click();
   assert.equal(await page.locator('.sound-button').getAttribute('aria-pressed'), 'false');
-  await page.locator('.nav-about').click();
-  assert.equal(await page.locator('#about-dialog').evaluate(dialog => dialog.open), true);
-  await page.locator('#about-dialog .dialog-close').click();
 
   for (let i = 0; i < 5; i++) await page.locator('#replay').click();
   await page.locator('#skip').click();
   assert.equal(await page.locator('.character').evaluateAll(elements => elements.every(element => getComputedStyle(element).opacity === '1')), true);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-  console.log('PASS: desktop load, 5 images, finale, pause/resume, skip, 5 profiles, sound, about, rapid replay');
+  assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true, 'Desktop is a single-screen poster');
+  console.log('PASS: Korean single-screen poster, 5 character reactions, finale, pause/resume, skip, sound, rapid replay');
 
   for (const width of [375, 390, 768]) {
     await page.setViewportSize({ width, height: 844 });
@@ -80,17 +97,21 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Horizontal overflow at ${width}`);
     assert.equal(await page.locator('#scene').getAttribute('data-state'), 'complete');
     await page.screenshot({ path: `${output}/mobile-${width}.png`, fullPage: true });
-    await page.locator('.crew-card[data-profile="keroro"]').click();
-    assert.equal(await page.locator('#profile-dialog').evaluate(dialog => dialog.open), true);
-    await page.locator('#profile-dialog .dialog-close').click();
-    console.log(`PASS: ${width}px responsive layout, no overflow, profile dialog`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true, `Single-screen layout at ${width}`);
+    console.log(`PASS: ${width}px responsive poster, no overflow`);
   }
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.screenshot({ path: `${output}/landscape.png`, fullPage: true });
+  assert.equal(await page.locator('#replay').evaluate(element => { const bounds = element.getBoundingClientRect(); return bounds.right <= innerWidth && bounds.bottom <= innerHeight; }), true, 'Landscape replay remains in the viewport');
+  console.log('PASS: landscape playback controls remain visible');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload({ waitUntil: 'networkidle' });
   assert.equal(await page.locator('#scene').getAttribute('data-state'), 'complete');
   assert.equal(await page.locator('#pause').isDisabled(), true);
   assert.equal(await page.locator('.character').evaluateAll(elements => elements.every(element => getComputedStyle(element).opacity === '1')), true);
+  await page.locator('.character-keroro button').click({ force: true });
+  assert.equal(await page.locator('.character-keroro img').evaluate(element => element.getAnimations().length), 0, 'Reduced motion also suppresses click reactions');
   console.log('PASS: reduced motion immediately shows the finished composition');
 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
