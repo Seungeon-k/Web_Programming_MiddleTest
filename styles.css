@@ -70,9 +70,9 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
 .character-hit:hover img { filter: drop-shadow(0 12px 0 #35492c24) drop-shadow(0 0 15px #fff9); }
 .character-label { position: absolute; left: 50%; bottom: 4%; translate: -50%; border: 1.5px solid var(--ink); background: var(--paper); padding: 4px 11px; box-shadow: 2px 2px var(--ink); border-radius: 3px; font-size: 10px; font-weight: 800; opacity: 0; transition: opacity .2s; white-space: nowrap; }
 .character-hit:hover .character-label, .character-hit:focus-visible .character-label { opacity: 1; }
-.character-keroro { left: 49%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
+.character-keroro { left: 42%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
 .character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); z-index: 8; --depth: 1.2; }
-.character-tamama { left: 83%; top: 26%; width: min(44cqw, 65cqh); z-index: 7; --depth: .9; }
+.character-tamama { left: 87%; top: 26%; width: min(38cqw, 58cqh); z-index: 7; --depth: .9; }
 .character-dororo { left: 43%; top: 81%; width: min(38cqw, 54cqh); z-index: 6; --depth: 1.5; }
 .character-kururu { left: 80%; top: 80%; width: min(41cqw, 58cqh); z-index: 6; --depth: 1.1; }
 .title-lockup { position: absolute; left: 50%; top: 57%; width: min(32cqw, 45cqh); translate: -50% -50%; z-index: 9; will-change: transform; pointer-events: none; }
@@ -136,9 +136,9 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .sound-button { font-size: 8px; padding: 8px 10px; }
   main { padding: 45px 12px 94px; }
   .scene-background { inset: -45px -12px -94px; }
-  .character-keroro { left: 49%; top: 26.5%; width: min(112cqw, 70cqh); }
+  .character-keroro { left: 43%; top: 26.5%; width: min(112cqw, 70cqh); }
   .character-giroro { left: 17%; top: 48%; width: min(65cqw, 48cqh); }
-  .character-tamama { left: 82%; top: 37%; width: min(66cqw, 47cqh); }
+  .character-tamama { left: 84%; top: 38%; width: min(58cqw, 40cqh); }
   .character-dororo { left: 42%; top: 80%; width: min(66cqw, 49cqh); }
   .character-kururu { left: 81%; top: 78%; width: min(67cqw, 48cqh); }
   .title-lockup { left: 51%; top: 58%; width: min(65cqw, 42cqh); }
@@ -170,6 +170,28 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .replay-button { font-size: 10px; padding: 9px 12px; }
   .character-label { font-size: 9px; padding: 3px 8px; }
 }
+/* Keep Tamama between Keroro's raised hand and Kururu as the poster narrows. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .character-keroro { left: 45%; }
+  .character-tamama { top: 44%; }
+}
+@media (max-width: 600px) and (max-height: 739px) and (orientation: portrait) {
+  .character-keroro { left: 43%; }
+  .character-tamama { left: 85%; top: 42%; width: min(52cqw, 34cqh); }
+}
+@media (min-width: 451px) and (max-width: 650px) and (orientation: portrait) {
+  .character-keroro { left: 45%; }
+  .character-tamama { left: 88%; top: 38%; width: min(58cqw, 38cqh); }
+}
+@media (min-width: 451px) and (max-width: 600px) and (max-height: 739px) and (orientation: portrait) {
+  .character-tamama { width: min(52cqw, 34cqh); }
+}
+@media (max-width: 450px) and (max-height: 620px) and (orientation: portrait) {
+  .character-tamama { width: min(50cqw, 32cqh); }
+}
+@media (min-width: 901px) and (orientation: portrait) {
+  .character-tamama { top: 42%; }
+}
 @media (max-height: 560px) and (orientation: landscape) {
   main { padding: 36px 20px 54px; }
   .site-header { height: 40px; padding-inline: 20px; }
@@ -181,9 +203,9 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .screen-copy { font-size: 7px; }
   .scene-toolbar { padding: 8px 20px; }
   .replay-button { padding: 8px 12px; }
-  .character-keroro { width: 87cqh; top: 38%; }
+  .character-keroro { left: 49%; width: 87cqh; top: 38%; }
   .character-giroro { left: 25%; }
-  .character-tamama { left: 76%; }
+  .character-tamama { left: 80%; top: 24%; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
