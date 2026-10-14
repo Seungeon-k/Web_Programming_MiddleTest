@@ -141,7 +141,7 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .character-tamama { left: 82%; top: 45%; width: min(66cqw, 47cqh); }
   .character-dororo { left: 42%; top: 80%; width: min(66cqw, 49cqh); }
   .character-kururu { left: 81%; top: 78%; width: min(67cqw, 48cqh); }
-  .title-lockup { left: 51%; top: 61%; width: min(65cqw, 42cqh); }
+  .title-lockup { left: 51%; top: 58%; width: min(65cqw, 42cqh); }
   .speech-bubble { display: none; }
   .monitor { width: min(31cqw, 21cqh); left: 16%; top: 88%; }
   .monitor-body { padding: 5px 5px 16px; border-width: 2px; box-shadow: 4px 4px #26352d, 5px 5px #1f2a23; }
