@@ -71,8 +71,8 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
 .character-label { position: absolute; left: 50%; bottom: 4%; translate: -50%; border: 1.5px solid var(--ink); background: var(--paper); padding: 4px 11px; box-shadow: 2px 2px var(--ink); border-radius: 3px; font-size: 10px; font-weight: 800; opacity: 0; transition: opacity .2s; white-space: nowrap; }
 .character-hit:hover .character-label, .character-hit:focus-visible .character-label { opacity: 1; }
 .character-keroro { left: 49%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
-.character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); --depth: 1.2; }
-.character-tamama { left: 83%; top: 43%; width: min(44cqw, 65cqh); --depth: .9; }
+.character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); z-index: 8; --depth: 1.2; }
+.character-tamama { left: 83%; top: 43%; width: min(44cqw, 65cqh); z-index: 7; --depth: .9; }
 .character-dororo { left: 43%; top: 81%; width: min(38cqw, 54cqh); z-index: 6; --depth: 1.5; }
 .character-kururu { left: 80%; top: 80%; width: min(41cqw, 58cqh); z-index: 6; --depth: 1.1; }
 .title-lockup { position: absolute; left: 50%; top: 57%; width: min(32cqw, 45cqh); translate: -50% -50%; z-index: 9; will-change: transform; pointer-events: none; }

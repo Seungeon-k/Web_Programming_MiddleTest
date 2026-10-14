@@ -25,3 +25,13 @@ Strict image extraction and local inpainting, not a new illustration. The poster
 `title.png`는 최초 요청 당시 제작한 일본어 버전으로 보관하며, 현재 페이지에서는 참조하거나 로드하지 않는다.
 
 모니터와 단순 장식은 CSS/SVG로 제작했다. 이미지 생성 출력은 원본 포스터의 픽셀을 직접 복사한 파일이 아니라 복원된 에셋이며, 생성되지 않은 원본 포스터 자체는 수정하지 않았다.
+
+## 기로로·타마마 다리 복원
+
+2026-10-14 추가 수정. 웹 배치의 잘림이 아니라 두 PNG 자체에서 두 번째 다리가 누락된 것이 원인이었다. 내장 image_gen 편집 도구에 현재 PNG를 편집 대상으로, 원본 포스터를 자세 참조로 전달했다. 기존 얼굴·팔·소품·보이는 다리는 유지하고, 골반 뒤에 접힌 두 번째 다리와 둥근 발을 추가했다. 수정본으로 `assets/giroro.png`, `assets/tamama.png`를 교체했다.
+
+프롬프트의 핵심 제약: “Make a surgical local anatomy repair, not a redesign. Restore only the missing second leg and complete rounded foot. Preserve the existing head, expression, proportions, both arms, existing leg, pose, colors, linework, scale and framing. Keep the rear leg tucked close to the body. Exactly two arms and two legs, both feet visible. True alpha transparency, no background or decorations.”
+
+기로로는 기존 길게 내려간 다리를 유지하고 몸 오른쪽 뒤에 짧게 접힌 다리를 복원했다. 타마마는 앞으로 내려간 두 손과 오른쪽으로 뻗은 다리를 유지하고 손 뒤에서 보이는 짧은 다리를 복원했다. 복원한 발을 포함한 모든 부위가 이미지 캔버스 안에 들어간 것을 시각적으로 확인했다.
+
+완성 화면에서 타마마의 하체가 쿠루루에, 기로로의 긴 다리 끝이 모니터에 가려지는 겹침도 확인했다. 타마마는 쿠루루 앞에, 기로로는 모니터 앞에 그리도록 레이어 순서를 조정했다. 캐릭터 크기와 위치, 등장 연출은 유지했다.
