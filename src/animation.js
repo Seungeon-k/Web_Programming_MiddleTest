@@ -1,0 +1,192 @@
+import { CAST, TIMING, launchTransform } from './scene.js';
+
+export class Invasion {
+  constructor(scene, particles, sound) {
+    this.scene = scene;
+    this.particles = particles;
+    this.sound = sound;
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.animations = [];
+    this.elapsed = 0;
+    this.state = 'loading';
+    this.frameId = null;
+    this.lastTick = 0;
+    this.fired = new Set();
+    this.characters = [...scene.querySelectorAll('.character')];
+    this.title = scene.querySelector('.title-lockup');
+    this.characters.forEach(element => { element.inert = true; });
+    this.title.inert = true;
+    this.bubble = scene.querySelector('.speech-bubble');
+    this.monitor = scene.querySelector('.monitor');
+    this.progress = document.querySelector('.progress-track');
+    this.screenStatus = scene.querySelector('.screen-status');
+    this.tick = this.tick.bind(this);
+    this.reduced.addEventListener('change', () => {
+      if (this.reduced.matches) this.finish();
+      else if (this.state === 'complete') this.complete();
+      else this.setState(this.state);
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && (this.state === 'playing' || this.state === 'complete')) this.pause();
+    });
+    this.resizeObserver = new ResizeObserver(() => {
+      this.particles.resize();
+      if (this.state === 'playing' || this.state === 'paused') {
+        this.build();
+        this.seek(this.elapsed);
+      }
+    });
+    this.resizeObserver.observe(scene);
+  }
+
+  setState(state) {
+    this.state = state;
+    this.scene.dataset.state = state;
+    document.body.classList.toggle('motion-paused', state === 'paused');
+    const active = state === 'complete' || (state === 'paused' && this.previousState === 'complete');
+    this.characters.forEach(element => { element.inert = !active; });
+    this.title.inert = !active;
+    this.scene.dispatchEvent(new CustomEvent('statechange', { detail: { state, elapsed: this.elapsed, reduced: this.reduced.matches } }));
+  }
+
+  center(element) {
+    const rect = element.getBoundingClientRect();
+    const scene = this.scene.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2 - scene.left, y: rect.top + rect.height / 2 - scene.top };
+  }
+
+  add(element, frames, options) {
+    const animation = element.animate(frames, { fill: 'both', ...options });
+    animation.pause();
+    animation.currentTime = this.elapsed;
+    this.animations.push(animation);
+    return animation;
+  }
+
+  build() {
+    this.animations.forEach(animation => animation.cancel());
+    this.animations = [];
+    this.characters.forEach(element => { element.querySelector('button').style.animation = 'none'; });
+    this.origin = this.center(this.scene.querySelector('.monitor-screen'));
+    for (const [index, character] of CAST.entries()) {
+      const element = this.scene.querySelector(`[data-character="${character.id}"]`);
+      const target = this.center(element);
+      const { x, y } = launchTransform(this.origin, target);
+      const twist = index % 2 ? 34 : -38;
+      this.add(element, [
+        { opacity: 0, transform: `translate(${x}px, ${y}px) scale(.025) rotate(${twist * 2}deg)`, offset: 0 },
+        { opacity: 1, transform: `translate(${x * .86}px, ${y * .82 - 45}px) scale(.2) rotate(${twist}deg)`, offset: .17 },
+        { opacity: 1, transform: `translate(${x * .3}px, ${y * .2 - 75}px) scale(.85) rotate(${-twist / 2}deg)`, offset: .5 },
+        { opacity: 1, transform: 'translate(0px, -12px) scale(1.1) rotate(-5deg)', offset: .78 },
+        { opacity: 1, transform: 'translate(0px, 0px) scale(1) rotate(0deg)', offset: 1 },
+      ], { duration: TIMING.flight, delay: character.delay, easing: 'cubic-bezier(.22,.65,.35,1)' });
+    }
+    this.add(this.title, [
+      { opacity: 0, transform: 'scale(.1) rotate(-10deg)', offset: 0 },
+      { opacity: 1, transform: 'scale(1.13) rotate(3deg)', offset: .52 },
+      { opacity: 1, transform: 'scale(.97) rotate(-1deg)', offset: .78 },
+      { opacity: 1, transform: 'scale(1) rotate(0deg)', offset: 1 },
+    ], { duration: TIMING.titleDuration, delay: TIMING.title, easing: 'cubic-bezier(.19,.7,.3,1)' });
+    this.add(this.bubble, [{ opacity: 0, scale: .1 }, { opacity: 1, scale: 1.1, offset: .7 }, { opacity: 1, scale: 1 }], { duration: 420, delay: TIMING.title + 650 });
+    this.add(this.scene.querySelector('.screen-flash'), [
+      { opacity: 0 }, { opacity: .9, offset: .25 }, { opacity: .1, offset: .6 }, { opacity: .65, offset: .8 }, { opacity: 0 },
+    ], { duration: 750, delay: 220 });
+    this.add(this.monitor, [
+      { transform: 'rotate(-10deg) scale(1)' }, { transform: 'rotate(-13deg) scale(1.04)', offset: .15 },
+      { transform: 'rotate(-8deg) scale(1)', offset: .3 }, { transform: 'rotate(-12deg) scale(1.03)', offset: .5 },
+      { transform: 'rotate(-9deg) scale(1)', offset: .7 }, { transform: 'rotate(-10deg) scale(1)' },
+    ], { duration: 3200, delay: 500 });
+  }
+
+  seek(elapsed) {
+    this.animations.forEach(animation => { animation.currentTime = elapsed; });
+    const value = Math.min(100, elapsed / TIMING.total * 100);
+    this.progress.querySelector('span').style.transform = `scaleX(${value / 100})`;
+    this.progress.setAttribute('aria-valuenow', String(Math.round(value)));
+  }
+
+  start() {
+    cancelAnimationFrame(this.frameId);
+    this.elapsed = 0; this.fired.clear(); this.particles.clear();
+    this.build();
+    if (this.reduced.matches) { this.finish(); return; }
+    this.screenStatus.textContent = 'LAUNCH SEQUENCE';
+    this.setState('playing');
+    this.sound.boot();
+    this.lastTick = performance.now();
+    this.frameId = requestAnimationFrame(this.tick);
+  }
+
+  tick(now) {
+    const delta = Math.min(now - this.lastTick, 64);
+    this.lastTick = now;
+    if (this.state === 'playing') {
+      this.elapsed = Math.min(this.elapsed + delta, TIMING.total);
+      this.seek(this.elapsed);
+      CAST.forEach((character, index) => {
+        if (this.elapsed >= character.delay && !this.fired.has(character.id)) {
+          this.fired.add(character.id);
+          this.particles.burst(this.origin.x, this.origin.y, 28, 1.5, character.color);
+          this.sound.pop(index);
+        }
+      });
+      if (this.elapsed >= TIMING.title && !this.fired.has('title')) {
+        this.fired.add('title');
+        const center = this.center(this.title);
+        this.particles.burst(center.x, center.y - 40, 110, 2.5);
+        this.sound.finale();
+      }
+      if (this.elapsed >= TIMING.total) this.complete();
+    }
+    this.particles.frame(delta);
+    if (this.state === 'playing' || (this.state === 'complete' && this.particles.items.length)) {
+      this.frameId = requestAnimationFrame(this.tick);
+    } else this.frameId = null;
+  }
+
+  complete() {
+    this.screenStatus.textContent = 'MISSION COMPLETE';
+    this.setState('complete');
+    if (!this.reduced.matches) {
+      this.characters.forEach((element, index) => {
+        element.querySelector('button').style.animation = `float ${3.2 + index * .4}s ease-in-out ${-index * .6}s infinite`;
+      });
+    }
+  }
+
+  finish() {
+    cancelAnimationFrame(this.frameId); this.frameId = null;
+    this.elapsed = TIMING.total;
+    this.seek(this.elapsed);
+    this.particles.clear();
+    if (this.reduced.matches) this.characters.forEach(element => { element.querySelector('button').style.animation = 'none'; });
+    this.complete();
+  }
+
+  pause() {
+    if (!['playing', 'complete'].includes(this.state)) return;
+    this.previousState = this.state;
+    cancelAnimationFrame(this.frameId); this.frameId = null;
+    this.setState('paused');
+  }
+
+  resume() {
+    if (this.state !== 'paused') return;
+    if (this.previousState === 'complete') this.complete();
+    else this.setState(this.previousState || 'playing');
+    this.lastTick = performance.now();
+    this.frameId = requestAnimationFrame(this.tick);
+  }
+
+  togglePause() { this.state === 'paused' ? this.resume() : this.pause(); }
+
+  celebrate(element, color) {
+    if (this.reduced.matches) return;
+    const target = this.center(element);
+    this.particles.burst(target.x, target.y, 24, 1, color);
+    if (!this.frameId && this.state === 'complete') {
+      this.lastTick = performance.now();
+      this.frameId = requestAnimationFrame(this.tick);
+    }
+  }
+}
