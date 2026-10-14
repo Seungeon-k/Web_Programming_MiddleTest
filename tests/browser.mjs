@@ -7,6 +7,12 @@ await mkdir(output, { recursive: true });
 const errors = [];
 // Ignore hover filter transitions when checking actual character movement.
 const movementTime = element => element.getAnimations().find(animation => animation.effect.getKeyframes().some(frame => 'transform' in frame))?.currentTime;
+// Keroro's square image box overlaps Giroro; click the exposed face instead.
+const clickKeroro = async (force = false) => {
+  const button = page.locator('.character-keroro button');
+  const bounds = await button.boundingBox();
+  await button.click({ force, position: { x: bounds.width * .6, y: bounds.height * .3 } });
+};
 const page = await browser.newPage({ viewport: { width: 1440, height: 1050 }, deviceScaleFactor: 1 });
 page.on('pageerror', error => errors.push(error.message));
 try {
@@ -51,7 +57,7 @@ try {
 
   await page.locator('#pause').click();
   assert.equal(await page.locator('.character-keroro').evaluate(element => element.inert), false, 'Paused complete scene keeps character controls focusable');
-  await page.locator('.character-keroro button').click();
+  await clickKeroro();
   assert.equal(await page.locator('dialog').count(), 0);
   await page.setViewportSize({ width: 1360, height: 1050 });
   await page.waitForTimeout(100);
@@ -61,7 +67,8 @@ try {
 
   for (const id of ['keroro', 'tamama', 'giroro', 'kururu', 'dororo']) {
     const character = page.locator(`[data-character="${id}"]`);
-    await character.locator('button').click({ force: true });
+    if (id === 'keroro') await clickKeroro(true);
+    else await character.locator('button').click({ force: true });
     assert.ok(await character.locator('img').evaluate(element => element.getAnimations().some(animation => animation.effect.getKeyframes().some(frame => 'transform' in frame))), `${id} reacts instead of opening a profile`);
   }
   await page.locator('#pause').click();
