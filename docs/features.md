@@ -272,11 +272,11 @@ $scene.on('pointermove', function (event) {
 ```css
 .scene { container-type: size; }
 .character-tamama {
-  left: 84%; top: 24%; width: min(46cqw, 68cqh);
+  left: 89%; top: 30%; width: min(46cqw, 68cqh);
 }
 @media (max-width: 900px) and (orientation: portrait) {
   .character-tamama {
-    left: 81%; top: 39%; width: min(70cqw, 50cqh);
+    left: 85%; top: 43%; width: min(70cqw, 50cqh);
   }
 }
 ```
