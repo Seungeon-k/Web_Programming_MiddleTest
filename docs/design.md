@@ -16,9 +16,11 @@
 
 ## 구현
 
-설치 의존성 없는 HTML/CSS/ES modules. Web Animations API로 등장과 클릭 반응을 제어하며 Canvas 2D로 파티클을 그린다. `scene.js`는 타이밍과 좌표, `animation.js`는 재생 상태, `particles.js`는 파티클, `audio.js`는 선택형 효과음, `main.js`는 UI와 포인터 동작을 담당한다.
+2026-10-26 사용자 요청에 따라 HTML/CSS/jQuery 구조로 단순화했다. jQuery 3.7.1은 로컬 배포본을 포함한다. `main.js`에서 이벤트, 클래스와 CSS 변수를 제어하고 `animations.css`에서 등장, 클릭 반응, 파티클을 재생한다. 이전 ES 모듈, 클래스 기반 재생기, Canvas와 Web Animations API 구현은 제거했다. 효과음은 로컬 WAV 파일을 HTML 오디오로 재생한다.
 
-투명 PNG 캐릭터 5종과 한국어 로고는 `assets/`에 저장한다. 모니터, 장식과 단순 아이콘은 CSS/SVG다.
+`is-playing`, `is-complete`, `is-paused` 클래스로 상태를 표현한다. CSS 지연값으로 등장 순서를 정하고 진행 막대의 `animationend` 이벤트로 완료를 처리한다. 일시정지는 `animation-play-state`를 사용하며 별도의 프레임 타이머를 두지 않는다. 파티클은 수명이 끝나면 제거되는 HTML 요소이고, 최대 6묶음으로 제한한다. 기능과 코드 예시는 `docs/features.md`에서 설명한다.
+
+투명 PNG 캐릭터 5종과 한국어 로고는 `assets/`에 저장한다. 모니터, 장식과 단순 아이콘은 CSS/SVG다. 캐릭터의 크기와 배치는 이번 구현 변경에서 유지한다.
 
 ## 재생과 접근성
 

@@ -43,3 +43,6 @@ Strict image extraction and local inpainting, not a new illustration. The poster
 편집 프롬프트: “Change only Tamama's legs into a wide straddle like the poster. Preserve the long right-extending leg; replace the tucked leg with a similarly long leg extending left and slightly down, about 110–130 degrees apart, both rounded feet visible. Keep the head tilt, expression, hat, badge, body, both hanging arms and hands, colors, linework, scale and framing unchanged. Exactly two arms and two legs. True alpha transparency.”
 
 쿠루루와 간격을 두기 위해 타마마의 중심 위치를 데스크톱에서는 장면 높이의 43%에서 26%로, 세로 화면에서는 45%에서 37%로 올렸다. 부유 동작 중에도 손끝이 쿠루루 모자와 겹치지 않도록 여유를 두었다. 얼굴을 가리게 된 말풍선도 왼쪽 위 빈 공간으로 옮겼다. 캐릭터 크기와 등장 연출은 유지했다.
+## 로컬 효과음 (2026-10-26)
+
+`pop.wav`와 `finale.wav`는 외부 음원을 가져오지 않고 사인파 주파수 변화와 감쇠를 이용해 직접 만든 짧은 효과음이다. 각각 0.24초, 0.68초이며 22,050Hz/16bit/mono WAV다. jQuery 버튼 제어 후 HTML `<audio>`로 재생한다. 이전 브라우저 실시간 합성을 정적 음원 재생으로 교체했다.

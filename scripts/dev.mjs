@@ -6,7 +6,7 @@ import { resolve, extname, sep } from 'node:path';
 const root = fileURLToPath(new URL(process.argv.includes('--dist') ? '../dist/' : '../', import.meta.url));
 const portArg = process.argv.indexOf('--port');
 const port = Number(portArg >= 0 ? process.argv[portArg + 1] : process.env.PORT || 4173);
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.wav': 'audio/wav' };
 
 const server = createServer(async (req, res) => {
   try {
@@ -14,7 +14,7 @@ const server = createServer(async (req, res) => {
     const pathname = decodeURIComponent(url.pathname);
     const file = resolve(root, `.${pathname === '/' ? '/index.html' : pathname}`);
     const relative = file.slice(root.length);
-    if (!file.startsWith(root) || relative.split(sep).some(part => part.startsWith('.')) || !['/index.html', '/styles.css'].includes(pathname) && pathname !== '/' && !/^\/(assets|src)\//.test(pathname)) {
+    if (!file.startsWith(root) || relative.split(sep).some(part => part.startsWith('.')) || !['/index.html', '/styles.css', '/animations.css'].includes(pathname) && pathname !== '/' && !/^\/(assets|src)\//.test(pathname)) {
       res.writeHead(404);res.end('Not found');return;
     }
     if (!(await stat(file)).isFile()) { res.writeHead(404);res.end('Not found');return; }

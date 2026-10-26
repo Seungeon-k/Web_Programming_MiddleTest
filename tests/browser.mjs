@@ -25,6 +25,14 @@ try {
   await Promise.all(heldRequests.map(route => route.continue()));
   await page.unroute('**/assets/tamama.png');
   await page.goto('http://127.0.0.1:4173', { waitUntil: 'networkidle' });
+  assert.equal(await page.evaluate(() => window.jQuery.fn.jquery), '3.7.1', 'Local jQuery loads');
+  assert.equal(await page.locator('canvas, script[type="module"]').count(), 0, 'Poster uses ordinary jQuery scripts and DOM particles');
+  const sequence = await page.locator('.character').evaluateAll(elements => elements.map(element => {
+    const animation = element.getAnimations().find(animation => animation.animationName === 'fly-out');
+    return animation.effect.getTiming();
+  }));
+  const titleTiming = await page.locator('.title-lockup').evaluate(element => element.getAnimations().find(animation => animation.animationName === 'title-pop').effect.getTiming());
+  assert.ok(sequence.every(timing => timing.delay + timing.duration < titleTiming.delay), 'All five CSS flights finish before the title');
   await page.waitForFunction(() => document.querySelector('#scene').dataset.state === 'complete');
   assert.equal(await page.locator('.character').count(), 5);
   assert.equal(await page.locator('.crew-card, dialog, footer, nav, #platoon').count(), 0, 'Only the interactive poster remains');
@@ -39,15 +47,18 @@ try {
   await page.waitForTimeout(1600);
   await page.locator('#pause').click();
   assert.equal(await page.locator('#scene').getAttribute('data-state'), 'paused');
+  assert.ok(await page.locator('.particle').count() > 0, 'Launch produces CSS particles');
   assert.ok(await page.locator('.character-giroro').evaluate(element => element.getBoundingClientRect().width / element.offsetWidth) > 1.4, 'First character rushes in front of the camera before landing');
   assert.ok(await page.locator('.character-giroro').evaluate(element => Number(getComputedStyle(element).zIndex)) >= 40, 'Rushing character renders in front of the poster');
   const progress = await page.locator('.progress-track').getAttribute('aria-valuenow');
   const camera = await page.locator('#scene').evaluate(element => getComputedStyle(element).transform);
   const poses = await page.locator('.character').evaluateAll(elements => elements.map(element => getComputedStyle(element).transform));
+  const particleTime = await page.locator('.particle').first().evaluate(element => element.getAnimations()[0].currentTime);
   await page.waitForTimeout(350);
   assert.equal(await page.locator('.progress-track').getAttribute('aria-valuenow'), progress);
   assert.deepEqual(await page.locator('.character').evaluateAll(elements => elements.map(element => getComputedStyle(element).transform)), poses);
   assert.equal(await page.locator('#scene').evaluate(element => getComputedStyle(element).transform), camera, 'Camera shake pauses with the flight');
+  assert.equal(await page.locator('.particle').first().evaluate(element => element.getAnimations()[0].currentTime), particleTime, 'CSS particles pause with the flight');
   await page.screenshot({ path: `${output}/mid-flight.png` });
   await page.locator('#pause').click();
   await page.waitForTimeout(150);
@@ -92,12 +103,14 @@ try {
   await page.locator('#pause').click();
   await page.locator('.sound-button').click();
   assert.equal(await page.locator('.sound-button').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('#pop-sound').evaluate(audio => audio.error), null, 'Local effect audio loads without media errors');
   await page.locator('.sound-button').click();
   assert.equal(await page.locator('.sound-button').getAttribute('aria-pressed'), 'false');
 
   for (let i = 0; i < 5; i++) await page.locator('#replay').click();
   await page.locator('#skip').click();
   assert.equal(await page.locator('.character').evaluateAll(elements => elements.every(element => getComputedStyle(element).opacity === '1')), true);
+  assert.equal(await page.locator('.burst').count(), 0, 'Skip clears transient particles');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true, 'Desktop is a single-screen poster');
   console.log('PASS: Korean single-screen poster, 5 character reactions, finale, pause/resume, skip, sound, rapid replay');
@@ -117,6 +130,15 @@ try {
   await page.screenshot({ path: `${output}/landscape.png`, fullPage: true });
   assert.equal(await page.locator('#replay').evaluate(element => { const bounds = element.getBoundingClientRect(); return bounds.right <= innerWidth && bounds.bottom <= innerHeight; }), true, 'Landscape replay remains in the viewport');
   console.log('PASS: landscape playback controls remain visible');
+
+  const touchPage = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await touchPage.goto('http://127.0.0.1:4173', { waitUntil: 'networkidle' });
+  await touchPage.locator('#skip:not([disabled])').tap();
+  await touchPage.touchscreen.tap(310, 300);
+  assert.equal(await touchPage.locator('#scene').evaluate(element => element.style.getPropertyValue('--px')), '0px', 'Touch taps do not trigger mouse parallax');
+  assert.equal(await touchPage.locator('#scene').evaluate(element => element.style.getPropertyValue('--py')), '0px');
+  await touchPage.close();
+  console.log('PASS: mobile touch does not shift the poster');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload({ waitUntil: 'networkidle' });

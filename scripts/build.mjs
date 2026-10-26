@@ -6,7 +6,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = join(root, 'dist');
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
-for (const path of ['index.html', 'styles.css', 'src', 'assets']) {
+for (const path of ['index.html', 'styles.css', 'animations.css', 'src', 'assets']) {
   await cp(join(root, path), join(dist, path), { recursive: true });
 }
-console.log('Build complete: dist/ — static site, no runtime dependencies.');
+console.log('Build complete: dist/ — static site with bundled jQuery.');

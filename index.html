@@ -8,6 +8,7 @@
   <title>개구리 중사 케로로 — 소대 출동!</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./animations.css">
   <link rel="preload" href="./assets/keroro.png" as="image">
   <link rel="preload" href="./assets/title-ko.png" as="image">
 </head>
@@ -63,7 +64,7 @@
         </div>
         <div inert class="title-lockup"><h1 id="hero-title"><img src="./assets/title-ko.png" width="1920" height="800" alt="개구리 중사 케로로" fetchpriority="high"></h1></div>
         <div class="speech-bubble">지구 정복,<br><b>시작합니다!</b><span>★</span></div>
-        <canvas id="particles" aria-hidden="true"></canvas>
+        <div id="particles" aria-hidden="true"></div>
         <div class="loading-message" role="status"><span class="loading-star">★</span><span>소대원들과 연결 중…</span></div>
       </div>
     </section>
@@ -79,6 +80,9 @@
     <p class="interaction-hint">캐릭터를 톡! 화면을 움직여 보세요.</p>
   </div>
   <noscript><p class="noscript-note">움직이는 포스터를 보려면 JavaScript를 켜 주세요.</p></noscript>
-  <script type="module" src="./src/main.js"></script>
+  <audio id="pop-sound" src="./assets/pop.wav" preload="auto"></audio>
+  <audio id="finale-sound" src="./assets/finale.wav" preload="auto"></audio>
+  <script defer src="./src/vendor/jquery-3.7.1.min.js"></script>
+  <script defer src="./src/main.js"></script>
 </body>
 </html>
