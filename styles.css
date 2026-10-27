@@ -70,7 +70,8 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
 .character-hit:hover img { filter: drop-shadow(0 12px 0 #35492c24) drop-shadow(0 0 15px #fff9); }
 .character-label { position: absolute; left: 50%; bottom: 4%; translate: -50%; border: 1.5px solid var(--ink); background: var(--paper); padding: 4px 11px; box-shadow: 2px 2px var(--ink); border-radius: 3px; font-size: 10px; font-weight: 800; opacity: 0; transition: opacity .2s; white-space: nowrap; }
 .character-hit:hover .character-label, .character-hit:focus-visible .character-label { opacity: 1; }
-.character-keroro { left: 43%; top: 35%; width: min(62cqw, 80cqh); z-index: 3; --depth: .6; }
+/* 오른쪽으로 뻗은 팔까지 포함한 PNG 상자보다 얼굴·몸통의 시각적 중심을 맞춥니다. */
+.character-keroro { left: 53%; top: 35%; width: min(56cqw, 70cqh); z-index: 3; --depth: .6; }
 .character-giroro { left: 17%; top: 48%; width: min(43cqw, 67cqh); z-index: 8; --depth: 1.2; }
 .character-tamama { left: 89%; top: 30%; width: min(46cqw, 68cqh); z-index: 7; --depth: .9; }
 .character-dororo { left: 43%; top: 81%; width: min(38cqw, 54cqh); z-index: 6; --depth: 1.5; }
@@ -136,7 +137,7 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .sound-button { font-size: 8px; padding: 8px 10px; }
   main { padding: 45px 12px 94px; }
   .scene-background { inset: -45px -12px -94px; }
-  .character-keroro { left: 48%; top: 26.5%; width: min(112cqw, 70cqh); }
+  .character-keroro { left: 55%; top: 26.5%; width: min(94cqw, 56cqh); }
   .character-giroro { left: 17%; top: 48%; width: min(65cqw, 48cqh); }
   .character-tamama { left: 85%; top: 43%; width: min(70cqw, 50cqh); }
   .character-dororo { left: 42%; top: 80%; width: min(66cqw, 49cqh); }
@@ -170,12 +171,12 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .replay-button { font-size: 10px; padding: 9px 12px; }
   .character-label { font-size: 9px; padding: 3px 8px; }
 }
-/* 케로로를 중앙으로 옮기고 오른쪽에 타마마 공간을 확보합니다. */
+/* 작은 세로 화면에서는 높이와 크기를 조정하고, 가로 중심은 위의 55%를 유지합니다. */
 @media (max-width: 650px) and (orientation: portrait) {
   .character-keroro { top: 24%; }
 }
 @media (max-width: 450px) and (orientation: portrait) {
-  .character-keroro { left: 46%; }
+  .character-keroro { top: 16.5%; width: min(76cqw, 56cqh); }
   .character-tamama { left: 86%; top: 44%; }
   .character-kururu { left: 81%; top: 84%; }
   .title-lockup { top: 62%; }
@@ -197,7 +198,7 @@ main { height: 100svh; height: 100dvh; padding: 48px 28px 74px; overflow: hidden
   .screen-copy { font-size: 7px; }
   .scene-toolbar { padding: 8px 20px; }
   .replay-button { padding: 8px 12px; }
-  .character-keroro { left: 48%; width: 87cqh; top: 38%; }
+  .character-keroro { left: 53%; width: 76cqh; top: 38%; }
   .character-giroro { left: 25%; }
   .character-tamama { left: 83%; top: 26%; }
   .character-kururu { left: 80%; }
